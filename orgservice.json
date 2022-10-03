@@ -1,0 +1,531 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "СОА, Лабораторная работа №1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://se.ifmo.ru/~s270245/orgservice.json"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Organization",
+      "description": "Everything about organizations"
+    }
+  ],
+  "paths": {
+    "/organizations": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Get all organizations",
+        "description": "Returns all organizations",
+        "operationId": "getOrganizations",
+        "parameters": [
+          {
+            "name": "filterParams",
+            "in": "query",
+            "description": "filters results by provided field names",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "sortParams",
+            "in": "query",
+            "description": "sorts results by provided field names",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "specifies the page number",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "specifies the page size",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "xml": {
+                    "name": "organizations",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Organization not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Add a new organization",
+        "description": "Add a new organization",
+        "operationId": "addOrganization",
+        "requestBody": {
+          "description": "Create a new organization",
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/organizations/{organizationId}": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Find organization by ID",
+        "description": "Returns a single organization",
+        "operationId": "getOrganizationById",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "description": "ID of organization to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Organization not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Update an existing organization",
+        "description": "Update an existing organization by Id",
+        "operationId": "updateOrganization",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "description": "ID of organization to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Organization not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Deletes an organization",
+        "description": "delete an organization",
+        "operationId": "deleteOrganization",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "description": "Organization id to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Organization not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/organizations/delete-by-type/{type}": {
+      "delete": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Delete one organization with matching type",
+        "description": "Deletes one (any) organization with matching type",
+        "operationId": "deleteOrganizationByType",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "Type of organization to delete.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OrganizationType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Organization not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/organizations/employees-avg": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Get the average of all employeeCount fields",
+        "description": "Returns the average of all employeeCount fields",
+        "operationId": "employeeCountAverage",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "number",
+                  "format": "double",
+                  "xml": {
+                    "name": "average",
+                    "wrapped": true
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No organizations were found"
+          }
+        }
+      }
+    },
+    "/organizations/find-by-fullname/{substring}": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Get all organizations with given substring in full name",
+        "description": "Returns all organizations with given substring in full name.",
+        "operationId": "findAllByFullname",
+        "parameters": [
+          {
+            "name": "substring",
+            "in": "path",
+            "description": "Substring of full name.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "xml": {
+                    "name": "organizations",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Organization not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Coordinates": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "number",
+            "format": "float",
+            "maximum": 91
+          },
+          "y": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "xml": {
+          "name": "coordinates"
+        }
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "zipCode": {
+            "type": "string",
+            "maxLength": 28
+          }
+        },
+        "xml": {
+          "name": "address"
+        }
+      },
+      "OrganizationType": {
+        "type": "string",
+        "description": "organization type",
+        "nullable": true,
+        "enum": [
+          "commercial",
+          "government",
+          "open_joint_stock_company"
+        ]
+      },
+      "OrganizationRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "ItmoUniversity"
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/Coordinates"
+          },
+          "annualTurnover": {
+            "type": "integer",
+            "format": "long",
+            "minimum": 0,
+            "example": 12345678
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Unique field",
+            "example": "Itmo University Full Name"
+          },
+          "employeesCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "minimum": 0,
+            "example": 1
+          },
+          "organizationType": {
+            "$ref": "#/components/schemas/OrganizationType"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        "xml": {
+          "name": "organization"
+        }
+      },
+      "Organization": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "Unique field, generated automatically",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "ItmoUniversity"
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/Coordinates"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Generated automatically",
+            "example": "2020-05-15T06:45:30.000Z"
+          },
+          "annualTurnover": {
+            "type": "integer",
+            "format": "long",
+            "minimum": 0,
+            "example": 12345678
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Unique field",
+            "example": "Itmo University Full Name"
+          },
+          "employeesCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "minimum": 0,
+            "example": 1
+          },
+          "organizationType": {
+            "$ref": "#/components/schemas/OrganizationType"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        "xml": {
+          "name": "organization"
+        }
+      }
+    },
+    "requestBodies": {
+      "Organization": {
+        "description": "Organization object that needs to be added",
+        "content": {
+          "application/xml": {
+            "schema": {
+              "$ref": "#/components/schemas/Organization"
+            }
+          }
+        }
+      }
+    }
+  }
+}
